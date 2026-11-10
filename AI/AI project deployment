@@ -1,0 +1,141 @@
+🚀 **My GitLab CI/CD Journey: From Runner Configuration Issues to Successful GitLab Pages Deployment!**
+
+Today, I successfully configured a self-hosted GitLab Runner on my Windows machine and deployed a static website using GitLab CI/CD and GitLab Pages.
+
+However, the journey wasn't as straightforward as expected. I encountered a few issues during runner configuration and troubleshooting. Here's what I learned.
+
+### 🔹 Step 1: GitLab Runner Setup
+
+- Created a new project runner in GitLab.
+- Registered and configured the runner on my Windows machine.
+- Configured the Shell executor.
+- Verified that the runner was online and idle.
+- Assigned the runner to my GitLab project.
+
+**Initial status:** Runner Online/Idle.
+
+### 🔹 Step 2: First Pipeline Execution – Runner Assignment Issue
+
+When I triggered my first pipeline, the job remained in Pending status.
+
+**Error:**
+`This job is stuck because the project doesn't have any runners online assigned to it.`
+
+**Troubleshooting:**
+- Checked runner availability.
+- Verified the runner status.
+- Navigated to Project → Settings → CI/CD → Runners.
+- Enabled the runner for the project.
+- Added the matching runner tag in `.gitlab-ci.yml`.
+
+This resolved the runner assignment issue.
+
+### 🔹 Step 3: Second Issue – PowerShell Not Found
+
+After assigning the runner, the job started but failed during environment preparation.
+
+**Error:**
+`exec: "pwsh": executable file not found in %PATH%.`
+
+**Root cause:**
+
+GitLab Runner was configured to use PowerShell Core (`pwsh`), but the Windows service couldn't locate the PowerShell executable.
+
+### 🔹 Step 4: Troubleshooting PowerShell
+
+I performed the following troubleshooting steps:
+
+1. Checked the PowerShell version:
+   `pwsh --version`
+
+2. Checked the executable location:
+   `where.exe pwsh`
+
+3. Identified that PowerShell was initially available through the WindowsApps alias.
+
+4. Checked the actual installation location using:
+   `Get-AppxPackage *PowerShell*`
+
+5. Verified that the standard installation directory did not initially exist.
+
+6. Tried installing PowerShell 7.6.9 using WinGet:
+   `winget install --id Microsoft.PowerShell --version 7.6.9 --exact --source winget --scope machine`
+
+7. Encountered another error:
+   `0x80072ee2 – Installation timeout`
+
+8. Downloaded the official PowerShell MSI directly from GitHub.
+
+9. Installed PowerShell 7.6.9 using Windows Installer (`msiexec`).
+
+10. Verified the actual executable:
+    `C:\Program Files\PowerShell\7\pwsh.exe`
+
+11. Added the PowerShell installation directory to the system PATH and refreshed the current session PATH.
+
+12. Verified the installation:
+    `pwsh --version`
+
+**Result:** PowerShell 7.6.9 was successfully installed and accessible.
+
+### 🔹 Step 5: Restarted GitLab Runner
+
+Restarted the GitLab Runner Windows service:
+
+`Restart-Service gitlab-runner`
+
+Verified the service status and retried the failed pipeline.
+
+### 🔹 Step 6: Successful CI/CD Pipeline & GitLab Pages Deployment
+
+After resolving the issues, I triggered the pipeline again.
+
+**Final Result: PASSED ✅**
+
+- GitLab Runner successfully executed the job.
+- PowerShell commands executed successfully.
+- Website files were copied into the `public` directory.
+- GitLab Pages deployment completed successfully.
+- Website became accessible through the published GitLab Pages URL.
+
+### 🔹 GitLab CI/CD Configuration
+
+```yaml
+stages:
+  - deploy
+
+deploy-website:
+  stage: deploy
+
+  tags:
+    - AI_Runner
+
+  script:
+    - mkdir -p public
+    - cp index.html public/index.html
+
+  pages: true
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+```
+
+### 💡 Key Learnings
+
+This hands-on exercise helped me understand:
+
+- GitLab Runner registration and project assignment.
+- Runner tags and job execution.
+- Windows Shell Executor.
+- PowerShell installation and system PATH configuration.
+- Troubleshooting CI/CD pipeline failures.
+- GitLab Pages deployment.
+- End-to-end CI/CD workflow.
+
+**My biggest takeaway:**
+
+In DevOps, configuring a pipeline is only one part of the job. Understanding why it fails, identifying the root cause, and implementing the right solution are equally important.
+
+Every failure is an opportunity to understand the technology better. Keep learning, keep experimenting, and keep building! 🚀
+
+#DevOps #GitLab #GitLabCI #CICD #GitLabRunner #PowerShell #Windows #GitLabPages #Automation #CloudDevOps #HandsOnLearning #ContinuousIntegration #ContinuousDeployment
