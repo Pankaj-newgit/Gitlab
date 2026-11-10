@@ -1,0 +1,62 @@
+🚀 **Hands-on DevOps: GitLab CI/CD Runner Configuration, Troubleshooting & Successful GitLab Pages Deployment**
+
+Recently, I worked on setting up a self-hosted GitLab Runner on Windows to automate static website deployment using GitLab CI/CD and GitLab Pages.
+
+During the implementation, I encountered multiple real-world challenges that helped me strengthen my troubleshooting skills.
+
+### 🔹 Key Challenges & Troubleshooting
+
+**1. GitLab Runner Registration & Management**
+- Faced duplicate and outdated runner registrations.
+- Investigated runner ownership, project assignment and Offline status.
+- Verified runner configuration using `gitlab-runner list` and `gitlab-runner verify`.
+- Cleaned up the old configuration and created a fresh project-level runner.
+
+**2. Runner Assignment & Pipeline Pending Issue**
+
+Initially, the pipeline remained stuck in Pending status because no eligible runner was assigned to the project.
+
+**Resolution:** Enabled the runner for the AI project and configured matching runner tags in `.gitlab-ci.yml`.
+
+**3. PowerShell Compatibility & Environment Issue**
+
+The pipeline failed during environment preparation with:
+
+`exec: "pwsh": executable file not found in %PATH%.`
+
+**Root cause:** The Windows GitLab Runner service could not locate the PowerShell Core executable.
+
+**Resolution:**
+- Investigated the WindowsApps PowerShell alias.
+- Installed PowerShell 7.6.9 using the official MSI installer.
+- Configured the system PATH.
+- Restarted the GitLab Runner Windows service.
+- Verified PowerShell availability using `pwsh --version`.
+
+### 🔹 Final Outcome
+
+<badge color="success">Pipeline Successfully Passed</badge>
+
+- GitLab Runner: Online and operational.
+- Executor: Shell (PowerShell Core).
+- CI/CD pipeline: Successful.
+- Deployment job: `deploy-website` – Passed.
+- GitLab Pages: `pages:deploy` – Passed.
+- Website: Successfully deployed and accessible.
+
+### 💡 Key Takeaways
+
+This hands-on exercise strengthened my understanding of:
+
+- GitLab Runner registration and lifecycle management.
+- Runner ownership, project assignment and tagging.
+- Windows Shell Executor and PowerShell integration.
+- Environment variables and system PATH configuration.
+- CI/CD pipeline troubleshooting.
+- Automated website deployment using GitLab Pages.
+
+**My biggest learning:** DevOps is not just about building pipelines; it is equally about identifying failures, understanding root causes and implementing reliable solutions.
+
+Keep learning, keep experimenting and keep automating! 🚀
+
+#DevOps #GitLab #GitLabCI #CICD #GitLabRunner #PowerShell #Automation #GitLabPages #CloudDevOps #ContinuousIntegration #ContinuousDeployment
