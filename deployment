@@ -1,0 +1,77 @@
+stages:
+  - build
+  - test
+  - security
+  - deploy
+
+# GitLab's built-in security scanners (they run in the "security" stage below)
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+default:
+  tags:
+    - AI_Runner
+
+# ---------- BUILD ----------
+build-website:
+  stage: build
+  image: node:20-alpine
+  script:
+    - mkdir -p public
+    - npm install -g html-minifier-terser
+    - >
+      html-minifier-terser
+      --collapse-whitespace --remove-comments
+      --minify-css true --minify-js true
+      -o public/index.html index.html
+    - ls -lh index.html public/index.html
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 week
+
+# ---------- UNIT TEST ----------
+unit-test-html:
+  stage: test
+  image: node:20-alpine
+  needs: []
+  script:
+    - npm install -g htmlhint
+    # 1. HTML syntax and structure checks
+    - htmlhint index.html
+    # 2. Required content checks
+    - grep -q "<title>" index.html
+    - grep -q "pankajprakash.ai@gmail.com" index.html
+    - grep -q "linkedin.com/in/" index.html
+    - grep -q "github.com/Pankaj-newgit" index.html
+    # 3. Fail if placeholder text is still present
+    - '! grep -Ei "your-email@example.com|your-linkedin-url|your-github-url|\[Add " index.html'
+
+# ---------- SECURITY ----------
+# Template jobs need the same runner tag and our "security" stage
+secret_detection:
+  stage: security
+  tags:
+    - AI_Runner
+
+semgrep-sast:
+  stage: security
+  tags:
+    - AI_Runner
+
+# ---------- DEPLOY ----------
+deploy-website:
+  stage: deploy
+  needs:
+    - build-website
+    - unit-test-html
+    - secret_detection
+  script:
+    - ls -lh public
+  pages: true
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
