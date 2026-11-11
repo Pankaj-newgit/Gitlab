@@ -1,0 +1,93 @@
+~ GitLab Self–Hosted Runner | Real–World CI/CD Troubleshooting & Resolution~
+If you are looking for something to built as a single, all-in-one DevSecOps platform. you should try Gitlab.----------------------------------------
+If first time you would have been going to try or start Gitlab to you may help.
+While implementing a CI/CD pipeline for my personal website using GitLab CI/CD and GitLab Pages, I encountered several practical challenges during the setup and deployment process.
+
+The objective was to configure a 𝘴𝘦𝘭𝘧-𝘩𝘰𝘴𝘵𝘦𝘥 𝘎𝘪𝘵𝘓𝘢𝘣 𝘙𝘶𝘯𝘯𝘦𝘳 𝘵𝘰 𝘦𝘹𝘦𝘤𝘶𝘵𝘦 𝘱𝘪𝘱𝘦𝘭𝘪𝘯𝘦 jobs using my personal machine's CPU and memory resources instead of relying on GitLab-hosted runners.
+
+           ~~~~~ 𝙲̲𝚑̲𝚊̲𝚕̲𝚕̲𝚎̲𝚗̲𝚐̲𝚎̲𝚜̲ ̲𝙵̲𝚊̲𝚌̲𝚎̲𝚍̲ ̲&̲ ̲𝚃̲𝚛̲𝚘̲𝚞̲𝚋̲𝚕̲𝚎̲𝚜̲𝚑̲𝚘̲𝚘̲𝚝̲𝚒̲𝚗̲𝚐̲ ~~~~~
+
+1️⃣ 𝗚𝗶𝘁𝗟𝗮𝗯 𝗔𝗰𝗰𝗼𝘂𝗻𝘁 𝗜𝗱𝗲𝗻𝘁𝗶𝘁𝘆 𝗩𝗲𝗿𝗶𝗳𝗶𝗰𝗮𝘁𝗶𝗼𝗻:-
+
+- Pipeline execution was initially blocked due to GitLab's account identity verification requirement.
+- GitLab prompted for additional verification, including the option to verify the account using a credit card.
+- This led me to explore an alternative approach using a self-hosted runner.
+
+2️⃣ 𝗖𝗼𝗻𝗳𝗶𝗴𝘂𝗿𝗶𝗻𝗴 𝗮 𝗦𝗲𝗹𝗳-𝗛𝗼𝘀𝘁𝗲𝗱 𝗥𝘂𝗻𝗻𝗲𝗿:-
+
+- Instead of relying on GitLab Instance Runners, configured a self-hosted project runner on my personal machine.
+- Disabled GitLab Instance Runners for the project to use local machine resources for CI/CD execution.
+- This provided a way to execute pipeline jobs using my own system's CPU and memory.
+
+3️⃣ 𝗥𝘂𝗻𝗻𝗲𝗿 𝗥𝗲𝗴𝗶𝘀𝘁𝗿𝗮𝘁𝗶𝗼𝗻 & 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗶𝘃𝗶𝘁𝘆:-
+
+- Registered the self-hosted runner and verified its connectivity using GitLab Runner CLI.
+- Identified duplicate runner registrations with the same name.
+- Found that one registration was invalid while the other was successfully verified.
+- Investigated runner registration and configuration using GitLab Runner commands.
+
+4️⃣ 𝗥𝘂𝗻𝗻𝗲𝗿 𝗢𝗳𝗳𝗹𝗶𝗻𝗲 & 𝗣𝗶𝗽𝗲𝗹𝗶𝗻𝗲 𝗣𝗲𝗻𝗱𝗶𝗻𝗴 𝗜𝘀𝘀𝘂𝗲:-
+
+- Pipeline was created but remained in Pending state because the expected runner was not picking up the jobs.
+- Investigated runner availability, project assignment, and untagged-job settings.
+- Identified an old runner registration assigned to multiple projects (AI and Test).
+- Reviewed runner status and project-level configuration to identify the scheduling issue.
+
+5️⃣ 𝗣𝗼𝘄𝗲𝗿𝗦𝗵𝗲𝗹𝗹 𝗘𝘅𝗲𝗰𝘂𝘁𝗼𝗿 𝗖𝗼𝗻𝗳𝗶𝗴𝘂𝗿𝗮𝘁𝗶𝗼𝗻:-
+
+- check the Installed PowerShell version and verified it should be 7.6.9  or +  
+- Configured the Shell executor with 𝘗𝘰𝘸𝘦𝘳𝘚𝘩𝘦𝘭𝘭 7 (`𝘱𝘸𝘴𝘩`).
+- Encountered PowerShell executable availability and compatibility issues.
+- Installed PowerShell 7.6.9 and verified its installation and executable path.
+- Reviewed `𝘤𝘰𝘯𝘧𝘪𝘨.𝘵𝘰𝘮𝘭` to validate executor and shell configuration.
+
+6️⃣ 𝗣𝗶𝗽𝗲𝗹𝗶𝗻𝗲 𝗦𝘁𝗶𝗹𝗹 𝗣𝗲𝗻𝗱𝗶𝗻𝗴? 𝗖𝗵𝗲𝗰𝗸 𝗥𝘂𝗻𝗻𝗲𝗿 𝗧𝗮𝗴𝘀
+
+- Identified runner tag mismatch as another important configuration to verify.
+- If tags are assigned during runner creation, the same tags must be specified in the CI/CD deployment job.
+- Updated the `.𝘨𝘪𝘵𝘭𝘢𝘣-𝘤𝘪.𝘺𝘮𝘭` configuration with matching runner tags.
+- Committed the changes and triggered the pipeline again.
+
+ 🎲----- 𝗜𝗺𝗽𝗼𝗿𝘁𝗮𝗻𝘁 𝗧𝗿𝗼𝘂𝗯𝗹𝗲𝘀𝗵𝗼𝗼𝘁𝗶𝗻𝗴 𝗖𝗼𝗺𝗺𝗮𝗻𝗱𝘀------
+
+```𝘱𝘰𝘸𝘦𝘳𝘴𝘩𝘦𝘭𝘭
+𝘨𝘪𝘵𝘭𝘢𝘣-𝘳𝘶𝘯𝘯𝘦𝘳.𝘦𝘹𝘦 𝘴𝘵𝘢𝘵𝘶𝘴
+𝘨𝘪𝘵𝘭𝘢𝘣-𝘳𝘶𝘯𝘯𝘦𝘳.𝘦𝘹𝘦 𝘷𝘦𝘳𝘪𝘧𝘺
+𝘨𝘪𝘵𝘭𝘢𝘣-𝘳𝘶𝘯𝘯𝘦𝘳.𝘦𝘹𝘦 𝘭𝘪𝘴𝘵
+
+𝘱𝘸𝘴𝘩 -𝘕𝘰𝘗𝘳𝘰𝘧𝘪𝘭𝘦 -𝘊𝘰𝘮𝘮𝘢𝘯𝘥 '$𝘗𝘚𝘝𝘦𝘳𝘴𝘪𝘰𝘯𝘛𝘢𝘣𝘭𝘦'
+
+where.exe pwsh
+```
+
+Also reviewed:
+- `config.toml` for executor and shell settings.
+- Windows Application Event Logs using `Get-WinEvent`.
+- Runner registration, project assignment, and tag configuration.
+
+>>>>>>>> 𝙵̲𝚒̲𝚗̲𝚊̲𝚕̲ ̲𝙴̲𝚗̲𝚟̲𝚒̲𝚛̲𝚘̲𝚗̲𝚖̲𝚎̲𝚗̲𝚝̲ ̲𝙲̲𝚘̲𝚗̲𝚏̲𝚒̲𝚐̲𝚞̲𝚛̲𝚊̲𝚝̲𝚒̲𝚘̲𝚗̲ ̲<<<<<<<<<<
+
+- GitLab Runner: 19.5.3
+- Operating System: Windows
+- Executor: Shell
+- Shell: PowerShell 7.6.9 (Core)
+- Deployment: GitLab Pages
+- Pipeline Configuration: `.gitlab-ci.yml`
+
+🎯 𝗙𝗶𝗻𝗮𝗹 𝗢𝘂𝘁𝗰𝗼𝗺𝗲:-
+
+After troubleshooting and configuring the runner environment:
+
+✅ Self-hosted runner successfully connected and operational.
+
+✅ CI/CD pipeline executed successfully.
+
+✅ `deploy-website` job passed.
+
+✅ `pages:deploy` job passed.
+
+✅ Portfolio website successfully deployed using GitLab Pages.
+
+At the last you will get all about  GitLab Runner architecture, CI/CD troubleshooting, Windows/mac environment configuration, and automated deployment.
+
+#DevOps #GitLab #GitLabCI #GitLabRunner #CICD #PowerShell #CloudDevOpsHub #Automation #GitLabPages  #CloudEngineering #VersionControl  #CloudDevOps #Jenkins #DevOps #CICD #Automation #JenkinsPipeline #Docker #AWS #Kubernetes #VikasRatnawat #ContinuousIntegration #ContinuousDeployment #GITHUB ACTIONS #MICROSERVICES #CloudEngineering #DevOpsEngineer
